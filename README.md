@@ -1,0 +1,1 @@
+# Some Navie Leetcode Solutions
