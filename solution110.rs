@@ -20,21 +20,27 @@ use std::rc::Rc;
 use std::cell::RefCell;
 impl Solution {
     pub fn is_balanced(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
-        Solution::height(root) > -1
+        if root == None { 
+            return true; 
+        }
+        let rb = root.as_ref().unwrap().borrow_mut();
+        let left = Solution::height(rb.left.clone());
+        let right = Solution::height(rb.right.clone());
+        (left - right).abs() <= 1 && 
+            Solution::is_balanced(rb.left.clone()) && 
+            Solution::is_balanced(rb.right.clone())
     }
 
     pub fn height(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
-        match root {
-            Some(node) => {
-                let left = Solution::height(node.borrow().left.clone());
-                let right = Solution::height(node.borrow().right.clone());
-                if (left - right).abs() > 1 || left == -1 || right == -1 {
-                    -1
-                } else {
-                    1 + left.max(right)
-                }
-            }
-            None => 0
+        if root == None {
+            return 0;
+        }
+        let rb = root.as_ref().unwrap().borrow_mut();
+        match (rb.left.as_ref(), rb.right.as_ref()) {
+            (Some(m), None) => { 1 + Solution::height(Some(m.clone())) },
+            (None, Some(m)) => { 1 + Solution::height(Some(m.clone())) },
+            ((Some(m), Some(n))) => { (1 + Solution::height(Some(m.clone()))).max(1 + Solution::height(Some(n.clone()))) },
+            _ => 1,
         }
     }
 }
